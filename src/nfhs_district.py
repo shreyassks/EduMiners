@@ -1,27 +1,3 @@
-"""Map NFHS-5 district data (old district names) onto the contest's district
-names using ACSEL/district_crosswalk.xlsx.
-
-The NFHS file (data/nfhs/NFHS-5-KA-Karnataka.csv) uses the 30 pre-rename districts of
-the 2019-20 survey (e.g. "Bijapur", "Gulbarga", "Bellary"). The GP contest data
-uses the current district names (e.g. "vijayapura", "kalaburgi", "ballari"). The
-crosswalk's `contest_district_value -> nfhs_join_name` column is the bridge.
-
-This module reads that bridge from the file (nothing is hard-coded) and returns
-the 18 fully-paired, enrichment-relevant NFHS indicators (both NFHS-4 and NFHS-5
-present in all 30 districts) as a tidy table keyed by the contest district value,
-carrying each indicator's NFHS-5 level and its NFHS-4 -> NFHS-5 change.
-
-Caveats baked into the notes, not silently hidden:
-  - Split districts (belagavi + belagavi chikkodi; tumakuru + tumakuru madhugiri)
-    share a single NFHS parent row, so both contest districts receive the same
-    NFHS values.
-  - vijayanagar did not exist in 2019-20; the crosswalk says use Ballari as a
-    proxy, so it inherits Bellary's NFHS values (flagged is_proxy=True).
-  - uttara kannada sirsi maps to Uttara Kannada but covers only part of it.
-  - NFHS values are district totals (urban+rural), while the contest is rural
-    only; treat as structural context that predates the 2022-25 assessment.
-"""
-
 from __future__ import annotations
 
 import re
@@ -33,9 +9,6 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 NFHS_CSV = REPO_ROOT / "data" / "nfhs" / "NFHS-5-KA-Karnataka.csv"
 CROSSWALK_XLSX = REPO_ROOT / "ACSEL" / "district_crosswalk.xlsx"
 
-# The 18 indicators that are fully paired (NFHS-4 and NFHS-5 in all 30 districts)
-# and relevant to explaining child numeracy. Keyed by the leading indicator
-# number in the NFHS "Indicator" column, with a short machine-friendly name.
 ENRICHMENT_INDICATORS: dict[int, str] = {
     1: "female_ever_school",
     15: "women_10yr_schooling",
@@ -80,9 +53,6 @@ def load_crosswalk_mapping() -> pd.DataFrame:
     cw["nfhs_name"] = cw["nfhs_join_name"].map(base_name)
     cw["is_proxy"] = False
 
-    # Second pass: resolve proxies (base name not in the NFHS file) by finding a
-    # sibling contest district mentioned in the join text (e.g. vijayanagar ->
-    # "use Ballari as proxy" -> reuse Ballari's NFHS name, "Bellary").
     resolved = dict(
         zip(
             cw.loc[

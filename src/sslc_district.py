@@ -1,36 +1,3 @@
-"""Map SSLC (Class 10 board) 2025 district-level MATHEMATICS results onto the
-contest's district names using ACSEL/district_crosswalk.xlsx.
-
-The GP contest primary data measures only mathematics competencies (grades 4-6),
-so the only comparable SSLC subject is Mathematics. The SSLC proforma
-(data/sslc/SSLCEXAM-1PROFORMAAPRIL2025.xlsx) reports subject x district statistics on
-sheet "PRO-2A(2)": columns 1-2 are the education-district code and name, columns
-9-14 are the MATHS block split BOYS/GIRLS x (APPEARED, PASSED, %). The final
-"TOTAL" row is dropped. Pass percentages are recomputed from PASSED/APPEARED
-(the sheet's own % is only kept for a validation check).
-
-The bridge to the contest is the crosswalk's `sslc_dist_code(s)` column. Unlike
-NFHS (where belagavi + belagavi chikkodi collapse to one parent), SSLC keeps
-Karnataka's *educational* districts, so each contest district maps 1:1 to a
-DISTINCT SSLC district (belagavi -> NN, tumakuru -> DD, tumakuru madhugiri -> DA
-/ MADHUGIRI, uttara kannada sirsi -> PA / SIRSI). There is therefore no
-pseudo-replication to aggregate away.
-
-Caveats kept visible, not hidden:
-  - SSLC covers urban + rural and is a pass/fail board exam of Class 10; the
-    contest is rural-only per-question accuracy in grades 4-6. Any relationship
-    is district-level (ecological) and directional only.
-  - The 2025 SSLC cohort predates none of, and overlaps only partly with, the
-    2022-25 contest cohorts (different students, ~4-6 years apart in schooling).
-  - One crosswalk gap: the source sheet leaves CHIKKODI's district-code cell
-    blank, so `belagavi chikkodi` has no code. It is resolved by name to the
-    SSLC "CHIKKODI" row (documented in CONTEST_TO_SSLC_NAME_FALLBACK).
-  - Rows with "(no contest row)" (Bengaluru Urban = AS+AN, Shivamogga) are
-    dropped: the contest has no data for them.
-  - Any contest district that still fails to match an SSLC row is EXCLUDED
-    (inner merge), never carried as NaN.
-"""
-
 from __future__ import annotations
 
 from pathlib import Path

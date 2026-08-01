@@ -2,30 +2,6 @@
 
 Running `python src/run_all.py` from the repo root rebuilds every file listed
 under `outputs:` in manifest.yml from the raw data, using only:
-
-  - the GP Maths Contest primary data in  ACSEL/Akshara_Data_For Datathon/
-  - the district crosswalk           in  ACSEL/district_crosswalk.xlsx
-  - NFHS-5 context                    in  data/nfhs/
-  - SSLC 2025 Class-10 maths context  in  data/sslc/
-
-Design rules this file follows:
-  - Read data with paths relative to the repo root (no absolute machine paths).
-  - Fix a random seed for anything that uses randomness, so metrics reproduce.
-  - Do not download data or models while running; the judging run is offline
-    (the dashboard inlines plotly.js instead of pulling it from a CDN).
-  - Finish quickly: the analysis is a handful of pandas group-bys + one OLS.
-
-Outputs written under outputs/:
-  tables/district_accuracy.csv          per-district student-weighted accuracy
-  tables/score_trend_by_grade_year.csv  mean accuracy by grade x year
-  tables/gender_gap.csv                 mean accuracy by grade x year x gender
-  tables/competency_accuracy.csv        overall accuracy per competency
-  tables/nfhs_correlations.csv          NFHS-5 indicator x grade Spearman r
-  tables/sslc_correlations.csv          contest vs SSLC maths pass% Spearman r
-  tables/model_metrics.csv              development-index OLS R^2 and coefficient
-  tables/district_gap.csv               observed - expected accuracy + segment
-  predictions/predictions.csv           per-district observed/expected/gap
-  figures/dashboard.html                combined interactive Plotly dashboard
 """
 
 from __future__ import annotations
@@ -98,7 +74,6 @@ def _contest_files() -> list[str]:
 
 
 def load_assessment() -> pd.DataFrame:
-    """Combine the 9 contest files (3 grades x 3 years) into one student table."""
     xlsx_files = _contest_files()
     if not xlsx_files:
         raise FileNotFoundError(f"No contest .xlsx files found under {ACSEL_DIR}")
@@ -119,11 +94,6 @@ def load_assessment() -> pd.DataFrame:
 
 
 def parse_competency_mapping(xls: pd.ExcelFile) -> pd.DataFrame:
-    """Read the (grade/year-specific) Question -> Competency map from one file.
-
-    The header row is detected dynamically because its position differs across
-    files (the row containing the literal cell "Questions").
-    """
     raw = xls.parse("Competency Mapping", header=None)
     header_mask = raw.apply(
         lambda row: row.astype(str).str.strip().eq("Questions").any(), axis=1
@@ -155,7 +125,6 @@ def load_competency() -> pd.DataFrame:
 # Analysis (mirrors notebooks/eda.ipynb, nfhs_analysis.ipynb, sslc_analysis.ipynb)
 # --------------------------------------------------------------------------- #
 def district_accuracy(assessment: pd.DataFrame) -> pd.DataFrame:
-    """Student-weighted contest maths accuracy per district (key = contest name)."""
     return (
         assessment.groupby("District")
         .agg(accuracy=("pct_correct", "mean"), n_students=("pct_correct", "size"))
@@ -175,7 +144,6 @@ def score_trend(assessment: pd.DataFrame) -> pd.DataFrame:
 
 
 def gender_gap(assessment: pd.DataFrame) -> pd.DataFrame:
-    """Mean accuracy by grade x year x gender, plus the girls-minus-boys gap."""
     stats = (
         assessment.groupby(["grade", "year", "Gender"])["pct_correct"]
         .mean()
@@ -255,10 +223,6 @@ def nfhs_correlations(assessment: pd.DataFrame, nfhs_ctx: pd.DataFrame) -> pd.Da
 def development_index_model(
     district_acc: pd.DataFrame, nfhs_ctx: pd.DataFrame
 ) -> tuple[pd.DataFrame, dict]:
-    """Fit accuracy ~ standardized development index; return per-district gaps.
-
-    Returns (district_gap, metrics) where metrics has r2, coef, n_districts.
-    """
     enriched = district_acc.merge(nfhs_ctx, on="contest_district_value", how="left")
     dd = enriched.dropna(subset=DEV_FEATURES + ["accuracy"]).copy()
 
@@ -384,9 +348,6 @@ def sslc_correlations(
     return pd.DataFrame(rows), sslc_join
 
 
-# --------------------------------------------------------------------------- #
-# Figures + dashboard
-# --------------------------------------------------------------------------- #
 def fig_score_trend(trend: pd.DataFrame) -> go.Figure:
     grades = sorted(trend["grade"].unique())
     fig = make_subplots(
