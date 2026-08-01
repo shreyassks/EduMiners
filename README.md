@@ -9,9 +9,9 @@ headroom.
 ## Team
 
 - Team name: EduMiners
-- Members: <add member names>
+- Members: Shreyas S K, Vaishnavi S B
 - Track(s) addressed: Data Insights & Visualization / Predictive Analytics
-- Contact email: <add contact email>
+- Contact email: skshreyas714@gmail.com
 - Language used: Python
 
 ## AI and LLM use is restricted
