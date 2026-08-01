@@ -1,0 +1,12 @@
+indicator,4,5,6
+female_ever_school,0.639,0.658,0.596
+improved_sanitation,0.597,0.64,0.568
+women_10yr_schooling,0.557,0.614,0.541
+child_marriage,-0.419,-0.469,-0.444
+health_insurance,0.386,0.467,0.45
+child_stunted,-0.384,-0.389,-0.299
+child_underweight,-0.283,-0.337,-0.244
+teen_motherhood,-0.257,-0.259,-0.291
+child_adequate_diet,-0.217,-0.146,-0.228
+clean_cooking_fuel,0.206,0.261,0.136
+electricity,0.109,0.159,0.077

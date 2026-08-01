@@ -1,0 +1,2 @@
+model,n_districts,r2,std_coef_per_sd,random_seed
+OLS accuracy ~ standardized development index,31,0.4271,0.0585,42

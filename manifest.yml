@@ -4,29 +4,43 @@
 # actually in the repo (check_manifest.py). Any mismatch becomes a note to the
 # jury, so keep this accurate and up to date.
 
-team_name: "REPLACE_WITH_TEAM_NAME"
+team_name: "EduMiners"
 
 tracks_addressed:
-  - "Data Insights & Visualization"   # keep only the track(s) you actually worked on
-  # - "Predictive Analytics"
-  # - "Policy & Intervention Design"
+  - "Data Insights & Visualization"   # cross-dataset EDA + interactive dashboard
+  - "Predictive Analytics"            # development-index diagnostic model (residual gaps)
 
 problem_statements:
-  - "REPLACE_WITH_PROBLEM_STATEMENT_ID_OR_TITLE"
+  - "Where are Karnataka's rural foundational-maths gaps (grades 4-6, GP Maths Contest 2022-25), and which district-level development/board conditions explain them?"
 
-# List every file src/run_all.py writes to outputs/ that you want the jury to see.
-# Only list files that actually exist in your repo. The pipeline checks each one.
-outputs: []
-  # - file: "outputs/tables/example_table.csv"
-  #   description: "REPLACE: what this file contains"
-  # - file: "outputs/figures/dashboard.html"
-  #   description: "REPLACE: interactive dashboard, static export"
-  # If your track includes a predictive model, also list its evaluation file:
-  # - file: "outputs/predictions/predictions.csv"
-  #   description: "Predicted scores for the holdout set"
-  #   evaluation_file: "outputs/tables/model_metrics.csv"
+# Every file src/run_all.py writes to outputs/ that we want the jury to see.
+outputs:
+  - file: "outputs/tables/district_accuracy.csv"
+    description: "Student-weighted contest maths accuracy per district (31 districts)"
+  - file: "outputs/tables/score_trend_by_grade_year.csv"
+    description: "Mean contest accuracy (with quartiles) by grade x school year"
+  - file: "outputs/tables/gender_gap.csv"
+    description: "Mean accuracy by grade x year x gender + girls-minus-boys gap (pp)"
+  - file: "outputs/tables/competency_accuracy.csv"
+    description: "Overall accuracy per maths competency (all grades/years pooled)"
+  - file: "outputs/tables/nfhs_correlations.csv"
+    description: "Per-grade Spearman r of district accuracy vs NFHS-5 indicators"
+  - file: "outputs/tables/sslc_correlations.csv"
+    description: "Spearman r of contest maths accuracy vs SSLC 2025 Class-10 maths pass%"
+  - file: "outputs/tables/district_gap.csv"
+    description: "Observed - expected accuracy (development-index benchmark) + 2x2 segment"
+  - file: "outputs/tables/model_metrics.csv"
+    description: "Development-index OLS: R^2, standardized coefficient, n_districts, seed"
+  - file: "outputs/predictions/predictions.csv"
+    description: "Per-district observed/expected accuracy, residual gap and segment"
+    evaluation_file: "outputs/tables/model_metrics.csv"
+  - file: "outputs/figures/dashboard.html"
+    description: "Combined interactive Plotly dashboard (trend, gender, NFHS, SSLC, gaps)"
 
-# Only include this section if you used a dataset beyond what the organizers gave you.
-external_datasets: []
-# - file: "data/external/census_2021.csv"
-#   source: "REPLACE: where this came from"
+# Context datasets used beyond the organizer GP Maths Contest data. Both are
+# public, aggregate, district-level tables (no personal records).
+external_datasets:
+  - file: "data/nfhs/NFHS-5-KA-Karnataka.csv"
+    source: "NFHS-5 (2019-21) Karnataka district fact sheets, mohfw.gov.in / rchiips.org"
+  - file: "data/sslc/SSLCEXAM-1PROFORMAAPRIL2025.xlsx"
+    source: "KSEAB SSLC (Class 10) April 2025 Exam-1 district proforma, kseab.karnataka.gov.in"

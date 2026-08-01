@@ -1,0 +1,7 @@
+comparison,grade,spearman_r,n_districts
+overall_pass_pct,all,0.57,31
+boys_pass_pct,all,0.537,31
+girls_pass_pct,all,0.612,31
+overall_pass_pct,4,0.503,31
+overall_pass_pct,5,0.565,31
+overall_pass_pct,6,0.551,31

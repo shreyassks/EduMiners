@@ -1,41 +1,39 @@
 {
-  "team_name": "REPLACE_WITH_TEAM_NAME",
+  "team_name": "EduMiners",
   "claims": [
     {
       "claim_id": "claim-1",
-      "description": "REPLACE. Example: 'Grade 5 girls in X district score Y percent lower on average than boys in the ABC GP Maths Contest'",
-      "supporting_output": "outputs/tables/gender_gap.csv",
+      "description": "District-level GP Maths Contest accuracy (grades 4-6, 2022-25) correlates with SSLC 2025 Class-10 mathematics pass% at Spearman rho = +0.57 across 31 districts, indicating the same districts lag in maths from primary school through the Class-10 board.",
+      "supporting_output": "outputs/tables/sslc_correlations.csv",
       "verification_method": "programmatic",
-      "claimed_value": "Y",
-      "unit": "percent",
+      "claimed_value": "0.57",
+      "unit": "spearman_r",
       "verification_detail": {
-        "filters": { "district": "X", "grade": 5, "year": "ABC" },
-        "group_by": "gender",
-        "aggregate": "mean",
-        "column": "Score"
+        "filters": { "comparison": "overall_pass_pct", "grade": "all" },
+        "column": "spearman_r"
       }
     },
     {
       "claim_id": "claim-2",
-      "description": "REPLACE. Example: 'Our regression model predicts Grade 4 scores with R2 = 0.XY on a held-out test set'",
+      "description": "A single standardized development index (female ever-schooled, improved sanitation, women with 10+ years schooling) explains R2 = 0.43 of the between-district variation in contest maths accuracy in an OLS benchmark over 31 districts.",
       "supporting_output": "outputs/tables/model_metrics.csv",
       "verification_method": "reproducible",
-      "claimed_value": "0.XY",
+      "claimed_value": "0.427",
       "unit": "ratio",
       "verification_detail": {
         "expected_output_file": "outputs/tables/model_metrics.csv",
         "metric_to_check": "r2",
         "random_seed": 42,
-        "test_split": 0.2
+        "reproduce_with": "python src/run_all.py"
       }
     },
     {
       "claim_id": "claim-3",
-      "description": "REPLACE. A qualitative or policy claim that cannot be reduced to one number. Example: 'Block-level mentoring reduced learning gaps in comparable districts, per NGO reports'",
+      "description": "Some districts under-perform their development-context benchmark (e.g. chitradurga by ~12.8 percentage points), marking them as school-side, rather than purely developmental, intervention priorities. Which residual-gap districts to prioritise and why is a policy judgement, not a single number.",
       "verification_method": "jury_review",
       "verification_detail": {
-        "reasoning": "REPLACE. Why this needs jury judgement rather than a programmatic or reproducible check",
-        "external_dataset": "data/external/REPLACE_IF_ANY.csv"
+        "reasoning": "The residual gap in outputs/predictions/predictions.csv is computed programmatically, but ranking districts for intervention and attributing the gap to school-side factors requires domain judgement the pipeline cannot make.",
+        "supporting_output": "outputs/predictions/predictions.csv"
       }
     }
   ]

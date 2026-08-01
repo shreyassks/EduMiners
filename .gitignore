@@ -20,3 +20,4 @@ renv/library/
 data/*
 !data/README.md
 ACSEL
+notebooks
