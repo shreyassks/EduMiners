@@ -1,0 +1,13 @@
+[project]
+name = "eduminers"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "matplotlib>=3.11.1",
+    "numpy>=2.4.6",
+    "pandas>=3.0.5",
+    "plotly>=6.9.0",
+    "seaborn>=0.13.2",
+]
